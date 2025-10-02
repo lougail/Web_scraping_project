@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from app.config import settings
-from app.routers import books, stats
+from app.routers.books import router as books_router
+from app.routers.stats import router as stats_router
 
 app = FastAPI(
     title=settings.APP_NAME,
@@ -9,8 +10,8 @@ app = FastAPI(
 )
 
 # Inclure les routers
-app.include_router(books.router)
-app.include_router(stats.router)
+app.include_router(books_router)
+app.include_router(stats_router)
 
 @app.get("/")
 def root():
