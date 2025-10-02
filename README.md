@@ -1,104 +1,155 @@
-Système de veille concurrentielle pour la collecte et l'analyse de données de livres depuis books.toscrape.com.
-Fonctionnalités
+# Web Scraping Project — Système de veille concurrentielle
 
-Web Scraping automatique de 1000+ livres avec Scrapy
-Nettoyage et validation des données via pipelines
-Stockage en base de données SQLite avec SQLAlchemy
-API REST avec FastAPI (Clean Architecture)
-Analyses statistiques (prix moyens, top catégories, etc.)
+## 🎯 Description
 
-Architecture
+Ce projet est un système de veille concurrentielle centré sur la collecte et l’analyse de données issues d’un site de livres ([books.toscrape.com](https://books.toscrape.com)).  
+Il combine un composant de **scraping** (via Scrapy) et une **API REST** (via FastAPI) pour exposer les données collectées et proposer des statistiques.
+
+### Fonctionnalités principales
+
+- Scraping automatique de plus de **1000 livres** à partir de *books.toscrape.com*  
+- Nettoyage et validation des données via pipelines Scrapy  
+- Stockage dans une base de données **SQLite** via **SQLAlchemy**  
+- API REST (FastAPI) structurée selon les principes de la Clean Architecture  
+- Endpoints de consultation des livres + endpoints de statistiques (moyennes, top catégories, etc.)  
+
+---
+
+## 📁 Architecture du projet
+
+```
 books-intelligence/
-├── books_scraper/          # Projet Scrapy
-│   ├── spiders/           # Spider de scraping
-│   ├── pipelines.py       # Nettoyage des données
-│   └── database/          # Modèles et connexion DB
-└── app/                    # API FastAPI (Clean Architecture)
-    ├── routers/           # Endpoints HTTP
-    ├── services/          # Logique métier
-    ├── repositories/      # Accès données
-    ├── schemas/           # Validation Pydantic
-    └── database/          # Configuration DB
-Installation
-Prérequis
+├── books_scraper/        # Projet Scrapy
+│   ├── spiders/           # Les spiders pour le scraping
+│   ├── pipelines.py       # Nettoyage, validation, insertion en DB
+│   └── database/          # Modèles SQLAlchemy & gestion DB
+└── app/                   # API FastAPI (Clean Architecture)
+    ├── routers/           # Définition des routes HTTP / endpoints
+    ├── services/          # Logique métier (cas d’usage)
+    ├── repositories/      # Accès aux données / abstraction DB
+    ├── schemas/           # Modèles Pydantic (validation)
+    └── database/          # Configuration de la connexion DB
+```
 
-Python 3.11+
-Git
+---
 
-Étapes
-bash# Cloner le repository
+## 🔧 Prérequis
+
+- Python 3.11 ou supérieur  
+- Git  
+- (Optionnel mais recommandé) un environnement virtuel  
+
+---
+
+## 🚀 Installation & utilisation
+
+### 1. Cloner le dépôt
+```bash
 git clone https://github.com/lougail/Web_scraping_project.git
 cd Web_scraping_project
+```
 
-# Créer l'environnement virtuel
+### 2. Créer un environnement virtuel et installer les dépendances
+```bash
 python -m venv venv
-source venv/bin/activate  # Linux/Mac
-# venv\Scripts\activate   # Windows
+# Sous Linux/Mac
+source venv/bin/activate
+# Sous Windows
+venv\Scripts\activate
 
-# Installer les dépendances
 pip install -e .
-Utilisation
-1. Lancer le scraping
-bashcd books_scraper
+```
+
+### 3. Lancer le scraping
+```bash
+cd books_scraper
 scrapy crawl books
-Résultat : environ 1000 livres scrapés et sauvegardés dans books_scraper/books.db
-2. Lancer l'API
-bash# Depuis la racine du projet
+```
+➡️ Les données collectées seront stockées dans `books_scraper/books.db`.
+
+### 4. Lancer l’API FastAPI
+Depuis la racine du projet :
+```bash
 uvicorn app.main:app --reload
+```
+- API disponible : [http://127.0.0.1:8000](http://127.0.0.1:8000)  
+- Documentation interactive : [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)  
 
-API disponible : http://127.0.0.1:8000
-Documentation interactive : http://127.0.0.1:8000/docs
+---
 
-Endpoints API
-Livres
+## 🧰 Endpoints de l’API
 
-GET /books - Liste paginée de livres (params: page, per_page, category)
-GET /books/{id} - Détails d'un livre
+### Livres
+- `GET /books` : liste paginée de livres (`page`, `per_page`, `category`)  
+- `GET /books/{id}` : détails d’un livre
 
-Statistiques
+### Statistiques
+- `GET /stats/general` : statistiques globales (nb de livres, prix moyen, etc.)  
+- `GET /stats/top-categories` : top catégories par nombre de livres  
+- `GET /stats/price-by-category` : prix moyen par catégorie  
 
-GET /stats/general - Statistiques générales (total livres, prix moyen)
-GET /stats/top-categories - Top catégories par nombre de livres
-GET /stats/price-by-category - Prix moyen par catégorie
-
-Exemples
-bash# Liste des 20 premiers livres
+#### Exemples avec `curl`
+```bash
+# Obtenir les 20 premiers livres
 curl http://localhost:8000/books
 
-# Livres de la catégorie Fiction
+# Filtrer par catégorie “Fiction”
 curl http://localhost:8000/books?category=Fiction
 
-# Prix moyen de tous les livres
+# Obtenir le prix moyen
 curl http://localhost:8000/stats/general
 
 # Top 10 catégories
 curl http://localhost:8000/stats/top-categories?limit=10
-Données collectées
-Pour chaque livre :
+```
 
-Titre, Prix, Notation (1-5 étoiles)
-Catégorie, Description
-Stock disponible
-UPC (identifiant unique)
-Nombre de reviews
-URL de la couverture
+---
 
-Stack Technique
+## 📊 Structure des données collectées
 
-Scraping : Scrapy 2.11+
-Base de données : SQLite + SQLAlchemy 2.0
-API : FastAPI 0.104+
-Validation : Pydantic 2.0
-Server : Uvicorn
+- Titre  
+- Prix  
+- Note (1 à 5 étoiles)  
+- Catégorie  
+- Description  
+- Stock disponible  
+- UPC (identifiant unique)  
+- Nombre de reviews  
+- URL de l’image (couverture)  
 
-Principes d'architecture
+---
 
-Clean Architecture : Séparation des couches (Router → Service → Repository → Model)
-Dependency Injection : FastAPI Dependencies
-Repository Pattern : Abstraction de l'accès aux données
-Validation : Pydantic schemas pour les entrées/sorties
+## 🧩 Stack technique
 
-Licence
-MIT
-Auteur
-Projet réalisé dans le cadre de la certification RNCP Développeur en Intelligence Artificielle (2023)
+- **Scraping** : Scrapy  
+- **Base de données** : SQLite + SQLAlchemy  
+- **API** : FastAPI  
+- **Validation** : Pydantic  
+- **Serveur** : Uvicorn  
+
+---
+
+## 🏛️ Principes d’architecture
+
+- **Clean Architecture** : séparation claire des couches (routers → services → repositories → modèles)  
+- **Injection de dépendances** (via FastAPI)  
+- **Repository Pattern** pour abstraire l’accès aux données  
+- **Validation stricte** via Pydantic  
+
+---
+
+## 🧾 Licence
+
+Ce projet est distribué sous licence **MIT**.  
+Auteur : Lougail  
+
+---
+
+## 📌 Améliorations possibles
+
+- Ajout de tests unitaires et d’intégration  
+- Scraping multi-sources (plusieurs sites de livres)  
+- Planification automatisée (cron, Airflow, etc.)  
+- Authentification et gestion des rôles sur l’API  
+- Migration vers une base plus robuste (PostgreSQL)  
+- Déploiement en production (Docker, cloud, CI/CD)  
