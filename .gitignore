@@ -1,0 +1,34 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+*.egg-info/
+dist/
+build/
+
+# Base de données
+*.db
+*.sqlite3
+
+# IDE
+.vscode/
+.idea/
+*.swp
+.DS_Store
+
+# Logs
+*.log
+
+# Environment variables
+.env
+
+# Scrapy
+.scrapy/
+
+# Data files
+*.csv
+*.json
